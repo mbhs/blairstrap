@@ -1,0 +1,34 @@
+#!/bin/bash
+
+# To set up with static.mbhs.edu
+#   git remote add static static@static.mbhs.edu:/srv/git/blairstrap.git
+# To use locally
+#   git push static master
+
+ROOT = "/srv/git/blairstrap.git"
+BUILD_PATH = "/tmp/blairstrap"
+BOOTSTRAP_URL = "https://github.com/twbs/bootstrap.git"
+BOOTSTRAP_BRANCH = "v4-dev"
+STATIC_PATH = "/srv/http/static/blairstrap"
+
+# Check the bootstrap branch
+if [ ! -d $BUILD_PATH ]; then 
+  git clone $BOOTSTRAP_URL $BUILD_PATH
+fi
+
+# Go to repository
+cd $BUILD_PATH
+
+# Update repository
+git checkout $BOOTSTRAP_BRANCH
+git pull
+npm install
+
+# Build with grunt
+grunt dist
+
+# Copy distribution to output
+if [ -d $STATIC_PATH ]; then
+  rm -rf $STATIC_PATH
+fi
+cp dist $STATIC_PATH
