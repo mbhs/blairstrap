@@ -8,3 +8,12 @@ $brand-primary: #9f2727;
 $brand-success: #0275d8;
 
 $input-color: $gray-dark;
+
+.navbar .navbar-brand {
+    color: white;
+}
+
+
+.navbar-nav .nav-item .nav-link {
+    color: white;
+}
