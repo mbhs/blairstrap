@@ -9,7 +9,7 @@ location=$(awk '/location/ {print $2}' $config)
 
 
 # Check whether a directory is a git repository
-is_git_repository() {
+check_git_repository() {
 
   # Check directory
   if [ ! -d $1 ]; then return 1; fi
@@ -29,7 +29,7 @@ is_git_repository() {
 }
 
 echo "Checking $location is $url"
-if is_git_repository $location $url; then
+if check_git_repository $location $url; then
   echo "Correct repository and URL."
 else
   echo "Invalid repository or URL."
