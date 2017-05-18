@@ -5,8 +5,11 @@ config="config.ini"
 url=$(awk '/url/ {print $2}' $config)
 branch=$(awk '/branch/ {print $2}' $config)
 commit=$(awk '/commit/ {print $2}' $config)
+name=$(awk '/name/ {print $2}' $config)
 location=$(awk '/location/ {print $2}' $config)
+destination=$(awk '/destination/ {print $2}' $config)
 
+out="$destination/$name/"
 
 # Check whether a directory is a git repository
 check_git_repository() {
@@ -16,15 +19,15 @@ check_git_repository() {
   
   # Check rev-parse and remote url
   local result=1
-  pushd $1 > /dev/null 2>&1
-  if [ -d .git ] || git rev-parse --git-dir > /dev/null 2>&1; then
+  pushd $1 > /dev/null
+  if [ -d .git ] || git rev-parse --git-dir > /dev/null; then
     if [ $(git config --get remote.origin.url) = $2 ]; then
       result=0;
     else result=1; fi
   else result=2; fi
 
-  popd > /dev/null 2>&1
-  return $result;
+  popd > /dev/null
+  return $result
   
 }
 
@@ -42,3 +45,21 @@ else
   fi
   git clone $url $location
 fi
+
+pushd $location > /dev/null
+git reset --hard
+git pull
+git checkout $commit
+popd > /dev/null
+cp scss/* $location/scss/
+
+pushd $location > /dev/null
+echo $(pwd)
+npm install grunt grunt-cli
+npm install
+grunt dist
+
+if [ -d $out ]; then rm -rf $out; fi
+if [ ! -d $destination ]; then mkdir -p $destination; fi
+
+mv dist/ $out
