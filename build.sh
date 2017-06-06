@@ -31,6 +31,7 @@ check_git_repository() {
   
 }
 
+# Check repository
 echo "Checking $location is $url"
 if check_git_repository $location $url; then
   echo "Correct repository and URL."
@@ -46,6 +47,7 @@ else
   git clone $url $location
 fi
 
+# Reset and pull
 pushd $location > /dev/null
 git reset --hard
 git pull
@@ -53,13 +55,16 @@ git checkout $commit
 popd > /dev/null
 cp scss/* $location/scss/
 
+# Build
 pushd $location > /dev/null
 echo $(pwd)
 npm install grunt grunt-cli
 npm install
 grunt dist
 
+# Remove existing output
 if [ -d $out ]; then rm -rf $out; fi
 if [ ! -d $destination ]; then mkdir -p $destination; fi
 
+# Copy to output
 mv dist/ $out
