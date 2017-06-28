@@ -60,7 +60,7 @@ pushd $location > /dev/null
 echo $(pwd)
 npm install grunt grunt-cli
 npm install
-grunt dist
+npm run dist
 
 # Remove existing output
 if [ -d $out ]; then rm -rf $out; fi
