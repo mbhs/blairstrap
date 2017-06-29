@@ -12,7 +12,7 @@ import re
 import sys
 
 
-OFFLINE = True  # mfw on plane
+OFFLINE = False  # mfw on plane
 OFFLINE_COPY = "/Users/Noah/Static/bootstrap"
 
 
@@ -29,7 +29,7 @@ def catch_keyboard_interrupt(function):
 
 
 @catch_keyboard_interrupt
-def clone(url: str, to: str, branch: str=None, commit: str=None):
+def clone(url: str, to: str, branch: str=None, commit: str=None, nocache: bool=False):
     """Clone a git repository to a location."""
 
     cwd = os.getcwd()
@@ -50,7 +50,7 @@ def clone(url: str, to: str, branch: str=None, commit: str=None):
             print("No git repository at found.")
             delete = True
         else:
-            if existing == url:
+            if existing == url and not nocache:
                 print("Found existing bootstrap repository.")
                 print("Resetting and updating...")
                 sh.git.reset("--hard")
@@ -119,7 +119,8 @@ if __name__ == "__main__":
 
     args = parser.parse_args(sys.argv[1:])
 
-    clone(args.url, args.build, args.branch, args.commit)
+    clone(args.url, args.build, args.branch, args.commit, args.nocache)
     sh.cp(*glob.glob("scss/*"), os.path.join(args.build, "scss"))
     build(args.build)
+    shutil.rmtree(args.out)
     sh.mv(os.path.join(args.build, "dist"), args.out)
